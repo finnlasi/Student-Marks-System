@@ -1,8 +1,12 @@
 #include "functions.h"
-#include <fstream>
-#include <sstream>
+#include <iostream>
+#include <vector>
 #include <iomanip>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
+
+using namespace std;
 
 const int CLASS_COUNT = 4;
 vector<Student> classes[CLASS_COUNT];
@@ -74,12 +78,8 @@ void loadFromFile(int classIndex) {
         getline(ss, s.name, ',');
         for (int i = 0; i < 5; ++i) {
             string mark;
-            if (!getline(ss, mark, ',')) break;
-            try {
-                s.marks[i] = stoi(mark);
-            } catch (...) {
-                s.marks[i] = 0; // default if invalid
-            }
+            getline(ss, mark, ',');
+            s.marks[i] = stoi(mark);
         }
         calculateResults(s);
         classes[classIndex].push_back(s);
@@ -91,18 +91,18 @@ int selectClass() {
     int choice;
     cout << "\nSelect Class:\n1. A\n2. B\n3. C\n4. D\nChoice: ";
     cin >> choice;
-    return choice - 1;
+    return choice - 1; // array index from 0
 }
 
 void menu(int classIndex) {
     while (true) {
-        system("CLS");
+        system("CLS"); // clear screen, Windows only
         cout << "\n1. Register a New Student\n2. Update Student Marks\n3. View Student Marks\n4. Switch Student’s Class\n5. Close the Program\nChoice: ";
         int choice;
         cin >> choice;
         cin.ignore();
-        system("CLS");
 
+        system("CLS");
         switch (choice) {
             case 1: {
                 Student s;
@@ -147,12 +147,14 @@ void menu(int classIndex) {
                 }
 
                 Student &s = classes[classIndex][choice - 1];
+
                 cout << "Enter new marks for " << s.name << ":\n";
                 s.marks[0] = inputMark("BM");
                 s.marks[1] = inputMark("ENG");
                 s.marks[2] = inputMark("MATH");
                 s.marks[3] = inputMark("SCI");
                 s.marks[4] = inputMark("HIS");
+
                 calculateResults(s);
                 saveToFile(classIndex);
                 cout << "Marks updated for " << s.name << "!\n";
@@ -192,6 +194,7 @@ void menu(int classIndex) {
                 system("pause");
                 break;
             }
+
             case 4:
                 return;
             case 5:
